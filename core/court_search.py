@@ -1,11 +1,12 @@
 """
 Russian courts (sudrf) search interface
 
-Placeholder ready for integration with sudrfparser / sudrfscraper.
-Does not scrape courts yet — only provides a clean API and guidance.
+Provides structured guidance and ready-made search URLs.
+Does not perform aggressive bulk scraping by default.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
+from urllib.parse import quote
 
 
 def search_cases(
@@ -14,28 +15,57 @@ def search_cases(
     year: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
-    Search court cases by name / case number / party.
-
-    Currently returns structured guidance. Later will call sudrf modules.
+    Build court-search guidance and direct links for a query.
     """
+    q = quote(query)
+    links = [
+        {
+            "name": "ГАС Правосудие (поиск)",
+            "url": f"https://bsr.sudrf.ru/bigs/portal.html",
+        },
+        {
+            "name": "sudrf.ru",
+            "url": "https://sudrf.ru",
+        },
+        {
+            "name": "Мосгорсуд",
+            "url": "https://mos-gorsud.ru",
+        },
+        {
+            "name": "Google site:sudrf.ru",
+            "url": f"https://www.google.com/search?q=site:sudrf.ru+{q}",
+        },
+        {
+            "name": "Yandex site:sudrf.ru",
+            "url": f"https://yandex.ru/search/?text=site:sudrf.ru+{q}",
+        },
+    ]
+
+    if region:
+        links.append(
+            {
+                "name": f"Search with region hint ({region})",
+                "url": f"https://www.google.com/search?q=site:sudrf.ru+{q}+{quote(region)}",
+            }
+        )
+
+    notes = [
+        "Bulk automated scraping of sudrf.ru may violate ToS and trigger blocks.",
+        "Prefer official portals and manual verification of case cards.",
+        "For automation later: integrate sudrfparser/sudrfscraper with delays + cache.",
+    ]
+    if year:
+        notes.append(f"Filter manually by year: {year}")
+
     return {
         "query": query,
         "region": region,
         "year": year,
         "cases": [],
-        "status": "not_implemented",
-        "notes": [
-            "Automatic bulk scraping of sudrf.ru can violate ToS and rate limits.",
-            "Recommended free approaches:",
-            "1. Use official court websites / GAS Pravosudie manually.",
-            "2. Integrate sudrfparser / sudrfscraper carefully with delays and caching.",
-            "3. For production — prefer official APIs or paid legal databases.",
-        ],
-        "suggested_urls": [
-            "https://sudrf.ru",
-            "https://bsr.sudrf.ru/bigs/portal.html",
-            "https://mos-gorsud.ru",
-        ],
+        "status": "guidance",
+        "links": links,
+        "suggested_urls": [x["url"] for x in links],
+        "notes": notes,
     }
 
 
@@ -47,12 +77,10 @@ def format_court_result(data: Dict[str, Any]) -> str:
         f"Status: {data.get('status')}",
         "",
     ]
-    if data.get("cases"):
-        lines.append("Cases:")
-        for c in data["cases"]:
-            lines.append(f"  - {c}")
-    else:
-        lines.append("No cases returned (module not fully implemented yet).")
+    if data.get("links"):
+        lines.append("Direct links:")
+        for item in data["links"]:
+            lines.append(f"  • {item['name']}: {item['url']}")
     if data.get("notes"):
         lines.append("\nNotes:")
         for n in data["notes"]:
