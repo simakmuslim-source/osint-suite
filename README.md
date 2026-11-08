@@ -1,19 +1,19 @@
 # OSINT Suite
 
-**Multifunctional free OSINT toolkit** combining the best tools from starred repositories.
+**Multifunctional free OSINT toolkit**  
+Everything runs locally. No paid APIs. No API keys required for core features.
 
-Everything is **100% free** and runs locally. No API keys, no paid requests.
-
-## Features
+## Status
 
 | Module | Status | Notes |
 |--------|--------|-------|
-| **Username search (Sherlock)** | ✅ Working | 400+ sites, free, no keys |
-| **Local reverse image** | ✅ Working | Perceptual hash (imagehash) |
-| Phone lookup | ⏳ Stub | Gokboru + vkOsint planned |
-| VK OSINT | ⏳ Stub | |
+| **Username (Sherlock)** | ✅ Working | 400+ sites |
+| **Phone lookup** | ✅ Working | Normalize + operator/region (DEF ranges) |
+| **VK OSINT** | ✅ Guidance | Safe free helpers + interface for token later |
+| **Local reverse image** | ✅ Working | Perceptual hash |
 | Contact scraper | ✅ Basic | Emails + phones from pages |
-| Russian courts | ⏳ Stub | sudrf* |
+| Russian courts | ⏳ Planned | sudrf* |
+| Web UI | ⏳ Planned | |
 
 ## Quick Start
 
@@ -21,38 +21,38 @@ Everything is **100% free** and runs locally. No API keys, no paid requests.
 git clone https://github.com/simakmuslim-source/osint-suite.git
 cd osint-suite
 python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### CLI Usage
+### Commands
 
 ```bash
-# Username search (Sherlock)
+# Username search
 python cli.py username someuser
 
-# Local reverse image search
-python cli.py image path/to/photo.jpg --db ./photos --threshold 8
-
-# Phone (stub for now)
+# Phone + operator/region
 python cli.py phone +79161234567
 
-# Full report
-python cli.py report --username someuser --output report.md
+# Phone + VK guidance
+python cli.py phone +79161234567 --vk
+
+# Local reverse image search
+python cli.py image photo.jpg --db ./photos --threshold 8
+
+# Full report (Markdown + optional JSON)
+python cli.py report --username someuser --phone +7916... --output report.md --json-output report.json
 ```
 
 ### GitHub Actions
 
-Go to **Actions → OSINT Report → Run workflow**.  
-You can also open an issue with the label `osint-request`.
+**Actions → OSINT Report → Run workflow**  
+or open an issue with label `osint-request`.
 
-The workflow uploads a Markdown report as an artifact.
+## Photo search note
 
-## Important notes about photo search
-
-- `cli.py image` does **local** perceptual-hash search (finds near-duplicates in a folder you provide).
-- It does **not** do face recognition across the internet (PimEyes / Yandex style).
-- For real face search use Yandex Images / search4faces / etc. manually, then feed interesting usernames back into Sherlock.
+`cli.py image` finds **near-duplicate** images in a local folder (perceptual hash).  
+It does **not** do internet-wide face recognition. For face search use Yandex / search4faces manually, then feed found usernames into Sherlock.
 
 ## License
 
