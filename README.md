@@ -1,19 +1,21 @@
 # OSINT Suite
 
 **Multifunctional free OSINT toolkit**  
-Runs locally. No paid APIs for core features.
+Local · no paid APIs for core features · MIT
 
-## Status
+## Features
 
 | Module | Status |
 |--------|--------|
-| Username (Sherlock) | ✅ |
-| Phone lookup + VK guidance | ✅ |
-| Contacts scraper | ✅ |
-| Local reverse image | ✅ |
-| Report (Markdown + JSON) | ✅ |
-| Courts (sudrf interface) | ✅ guidance |
-| **Web UI (Streamlit)** | ✅ |
+| Username search (Sherlock) | OK |
+| Phone lookup + VK guidance | OK |
+| Contacts scraper | OK |
+| Local reverse image (phash) | OK |
+| Courts (sudrf links + guidance) | OK |
+| Report Markdown / JSON / PDF | OK |
+| Web UI (Streamlit) | OK |
+| Docker | OK |
+| GitHub Actions report | OK |
 
 ## Install
 
@@ -32,8 +34,16 @@ python cli.py username someuser
 python cli.py phone +79161234567 --vk
 python cli.py contacts https://example.com
 python cli.py image photo.jpg --db ./photos --threshold 8
-python cli.py court "Иванов Иван" --region Москва --year 2024
-python cli.py report --username someuser --phone +7916... --url https://example.com --output report.md --json-output report.json
+python cli.py court "Ivanov" --region Moscow --year 2024
+
+# Full report (MD + JSON + PDF)
+python cli.py report \
+  --username someuser \
+  --phone +7916... \
+  --url https://example.com \
+  --output report.md \
+  --json-output report.json \
+  --pdf-output report.pdf
 ```
 
 ## Web UI
@@ -42,17 +52,30 @@ python cli.py report --username someuser --phone +7916... --url https://example.
 streamlit run webapp.py
 ```
 
-Opens a local browser with tabs: Username · Phone · Contacts · Image · Courts · Report.
+## Docker
+
+```bash
+docker compose up --build
+# open http://localhost:8501
+```
+
+Or:
+
+```bash
+docker build -t osint-suite .
+docker run -p 8501:8501 osint-suite
+```
 
 ## GitHub Actions
 
-**Actions → OSINT Report → Run workflow**  
-or open an issue with label `osint-request`.
+Actions → OSINT Report → Run workflow  
+or create an issue with label `osint-request`.
 
 ## Notes
 
-- **Photo search** is local perceptual-hash only (near-duplicates in a folder you provide). For face search across the internet use Yandex / search4faces, then feed usernames into Sherlock.
-- **Courts** module gives official links and safe guidance; aggressive bulk scraping of sudrf is not enabled by default.
+- Image search is local near-duplicate search only.
+- Face search across the internet → use Yandex / search4faces, then Sherlock.
+- Courts module gives official links; bulk sudrf scraping is not enabled by default.
 
 ## License
 
