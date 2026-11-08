@@ -4,7 +4,6 @@ OSINT Suite – unified CLI
 """
 
 import click
-from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -129,6 +128,24 @@ def image(image_path: str, database_folder: str, threshold: int):
         table.add_row(str(dist), path)
 
     console.print(table)
+
+
+@cli.command()
+@click.argument("query")
+@click.option("--region", default=None, help="Region / court (optional)")
+@click.option("--year", default=None, type=int, help="Year (optional)")
+def court(query: str, region: str, year: int):
+    """Russian courts search interface (sudrf guidance)"""
+    console.print(Panel(f"[bold blue]Court search:[/] {query}", title="Sudrf"))
+
+    from core.court_search import search_cases, format_court_result
+    data = search_cases(query=query, region=region, year=year)
+    console.print(Panel(format_court_result(data), title="Result"))
+
+    if data.get("suggested_urls"):
+        console.print("[bold]Suggested official sources:[/]")
+        for u in data["suggested_urls"]:
+            console.print(f"  • {u}")
 
 
 @cli.command()
