@@ -155,8 +155,9 @@ def court(query: str, region: str, year: int):
 @click.option("--image", "image_path", default=None, type=click.Path(exists=True))
 @click.option("--output", default="report.md")
 @click.option("--json-output", default=None, help="Also write machine-readable JSON")
-def report(username, phone, url, image_path, output, json_output):
-    """Generate full OSINT report (Markdown + optional JSON)"""
+@click.option("--pdf-output", default=None, help="Also write PDF report")
+def report(username, phone, url, image_path, output, json_output, pdf_output):
+    """Generate full OSINT report (Markdown + optional JSON/PDF)"""
     console.print("[bold green]Generating report...[/]")
 
     username_data = None
@@ -196,11 +197,18 @@ def report(username, phone, url, image_path, output, json_output):
         contacts_data=contacts_data,
         image_data=image_data,
     )
-    written = save_report(data, md_path=output, json_path=json_output)
+    written = save_report(
+        data,
+        md_path=output,
+        json_path=json_output,
+        pdf_path=pdf_output,
+    )
 
     console.print(f"[green]Markdown → {written['markdown']}[/]")
     if "json" in written:
         console.print(f"[green]JSON → {written['json']}[/]")
+    if "pdf" in written:
+        console.print(f"[green]PDF → {written['pdf']}[/]")
 
 
 if __name__ == "__main__":
